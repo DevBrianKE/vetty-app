@@ -65,19 +65,20 @@ class OrderItem(db.Model):
     def __repr__(self):
         return f"<OrderItem Order:{self.order_id} Product:{self.product_id} Qty:{self.quantity}>"
 
+# 🔹 UPDATED Booking class
 class Booking(db.Model):
     __tablename__ = 'bookings'
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    service_name = db.Column(db.String(100), nullable=False)  # e.g., "Grooming", "Vaccination"
-    service_date = db.Column(db.DateTime, nullable=False)      # When the service is scheduled
-    status = db.Column(db.String(20), nullable=False, default='pending')  # pending, approved, completed, canceled
+    service_name = db.Column(db.String(100), nullable=False)  # Grooming, Vaccination, Checkup
+    appointment_date = db.Column(db.DateTime, nullable=False)
+    status = db.Column(db.String(20), default='pending')  # pending, approved, completed, canceled
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     def __repr__(self):
-        return f"<Booking {self.service_name} for User:{self.user_id} on {self.service_date}>"
+        return f"<Booking {self.service_name} for User:{self.user_id} on {self.appointment_date}>"
 
 class Review(db.Model):
     __tablename__ = 'reviews'
@@ -94,4 +95,3 @@ class Review(db.Model):
     def __repr__(self):
         target = self.product_id if self.product_id else self.service_name
         return f"<Review by User:{self.user_id} for {target} - Rating:{self.rating}>"
-
