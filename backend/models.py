@@ -79,3 +79,19 @@ class Booking(db.Model):
     def __repr__(self):
         return f"<Booking {self.service_name} for User:{self.user_id} on {self.service_date}>"
 
+class Review(db.Model):
+    __tablename__ = 'reviews'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    product_id = db.Column(db.Integer, db.ForeignKey('products.id'), nullable=True)  # Can review a product
+    service_name = db.Column(db.String(100), nullable=True)  # Can review a service instead
+    rating = db.Column(db.Integer, nullable=False)  # 1 to 5
+    comment = db.Column(db.Text)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    def __repr__(self):
+        target = self.product_id if self.product_id else self.service_name
+        return f"<Review by User:{self.user_id} for {target} - Rating:{self.rating}>"
+
