@@ -19,3 +19,23 @@ class User(db.Model):
 
     def __repr__(self):
         return f"<User {self.username}>"
+    
+class Product(db.Model):
+    __tablename__ = 'products'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.Text)
+    price = db.Column(db.Numeric(10, 2), nullable=False)
+    stock = db.Column(db.Integer, nullable=False, default=0)
+    image_url = db.Column(db.Text)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    order_items = db.relationship('OrderItem', backref='product', lazy=True)
+    reviews = db.relationship('Review', backref='product', lazy=True)
+
+    def __repr__(self):
+        return f"<Product {self.name}>"
+
+    
