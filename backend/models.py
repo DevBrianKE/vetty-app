@@ -4,11 +4,11 @@ from datetime import datetime
 class User(db.Model):
     __tablename__ = 'users'
 
-    id = db.Column(db.Integer, primary_key=True) # Unique user ID
+    id = db.Column(db.Integer, primary_key=True)  # Unique user ID
     username = db.Column(db.String(50), nullable=False, unique=True)
     email = db.Column(db.String(100), nullable=False, unique=True)
     password = db.Column(db.String(255), nullable=False)
-    role = db.Column(db.String(20), nullable=False, default='user') # 'user' or 'admin'
+    role = db.Column(db.String(20), nullable=False, default='user')  # 'user' or 'admin'
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
@@ -19,7 +19,7 @@ class User(db.Model):
 
     def __repr__(self):
         return f"<User {self.username}>"
-    
+
 class Product(db.Model):
     __tablename__ = 'products'
 
@@ -37,5 +37,3 @@ class Product(db.Model):
 
     def __repr__(self):
         return f"<Product {self.name}>"
-
-    
