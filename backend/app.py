@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from flask import jsonify
 
 app = Flask(__name__)
 
@@ -26,6 +27,23 @@ def make_shell_context():
         Booking=Booking,
         Review=Review
     )
+
+
+@app.route('/products', methods=['GET'])
+def get_products():
+    products = Product.query.all()
+    # Convert each product to a dictionary
+    products_list = []
+    for p in products:
+        products_list.append({
+            "id": p.id,
+            "name": p.name,
+            "description": p.description,
+            "price": float(p.price),
+            "stock": p.stock
+        })
+    return jsonify(products_list)
+
 
 if __name__ == "__main__":
     app.run(debug=True)
