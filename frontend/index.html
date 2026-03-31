@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vetty</title>
+
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="bg-gray-50 text-gray-800">
+
+<!-- Header / Navbar -->
+<header class="bg-white shadow-sm">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+        <h1 class="text-2xl font-bold text-green-600">Vetty</h1>
+        <nav class="space-x-6 text-sm font-medium">
+            <a href="index.html" class="text-green-700 hover:text-green-600 transition">Home</a>
+            <a href="pages/products.html" class="text-green-700 hover:text-green-600 transition">Products</a>
+            <a href="pages/services.html" class="text-green-700 hover:text-green-600 transition">Services</a>
+            <a href="pages/cart.html" class="text-green-700 hover:text-green-600 transition">Cart</a>
+            <a href="pages/login.html" class="text-green-700 hover:text-green-600 transition">Login</a>
+        </nav>
+    </div>
+</header>
+
+<!-- Hero Section -->
+<section class="bg-gradient-to-r from-green-500 to-green-600 text-white">
+    <div class="max-w-7xl mx-auto px-6 py-20 text-center">
+        <h2 class="text-4xl md:text-5xl font-bold mb-4">
+            Care for Your Pets, the Smart Way 🐾
+        </h2>
+        <p class="text-lg opacity-90 mb-6">
+            Shop products, book services, and manage everything in one place.
+        </p>
+        <a href="pages/products.html" class="bg-white text-green-600 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition">
+            Shop Now
+        </a>
+    </div>
+</section>
+
+<!-- Featured Products -->
+<section class="max-w-7xl mx-auto px-6 py-12 bg-gray-50">
+    <h2 class="text-2xl font-bold mb-8 text-center">Featured Products</h2>
+    <div id="product-list" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 text-center">
+        <!-- Product cards will be dynamically injected here by JS -->
+        <!-- Example static card structure if you want placeholders -->
+        <!-- 
+        <div class="bg-white p-6 rounded-lg shadow hover:shadow-lg transition">
+            <h3 class="text-lg font-bold mb-2">Dog Food</h3>
+            <p class="text-gray-600 mb-4">High quality dog food for all breeds</p>
+            <p class="text-green-600 font-semibold mb-4">$30.00</p>
+            <button class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-500 transition">Add to Cart</button>
+        </div>
+        -->
+    </div>
+</section>
+
+
+<!-- Featured Services -->
+<section class="max-w-7xl mx-auto px-6 py-12 bg-gray-100">
+    <h2 class="text-2xl font-bold mb-8 text-center">Featured Services</h2>
+    <div id="service-list" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 text-center">
+        <!-- Service cards -->
+        <div class="bg-white p-6 rounded-lg shadow hover:shadow-lg transition">
+            <h3 class="text-lg font-bold mb-2">Grooming</h3>
+            <p class="text-gray-600 mb-4">Professional grooming services for your pet</p>
+            <button class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-500 transition">Book</button>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow hover:shadow-lg transition">
+            <h3 class="text-lg font-bold mb-2">Vaccination</h3>
+            <p class="text-gray-600 mb-4">Professional vaccination services for your pet</p>
+            <button class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-500 transition">Book</button>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow hover:shadow-lg transition">
+            <h3 class="text-lg font-bold mb-2">Health Checkup</h3>
+            <p class="text-gray-600 mb-4">Regular health examinations and diagnostics</p>
+            <button class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-500 transition">Book</button>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow hover:shadow-lg transition">
+            <h3 class="text-lg font-bold mb-2">Dental Care</h3>
+            <p class="text-gray-600 mb-4">Comprehensive dental cleaning and care</p>
+            <button class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-500 transition">Book</button>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow hover:shadow-lg transition">
+            <h3 class="text-lg font-bold mb-2">Emergency Care</h3>
+            <p class="text-gray-600 mb-4">24/7 emergency veterinary services</p>
+            <button class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-500 transition">Book</button>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="bg-white border-t mt-10">
+    <div class="max-w-7xl mx-auto px-6 py-6 text-center text-sm text-gray-500">
+        © 2026 Vetty. All rights reserved.
+    </div>
+</footer>
+
+<!-- JS -->
+<script src="js/app.js"></script>
+</body>
+</html>
