@@ -61,3 +61,56 @@ function addToCart(id, name, price) {
 
     alert("Added to cart 🛒");
 }
+
+// ---------------- LOAD CART ----------------
+function loadCart() {
+    const cartContainer = document.getElementById("cart-items");
+    const totalEl = document.getElementById("cart-total");
+
+    if (!cartContainer) return;
+
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+    cartContainer.innerHTML = "";
+
+    let total = 0;
+
+    cart.forEach(item => {
+        total += item.price * item.quantity;
+
+        const div = document.createElement("div");
+        div.className = "bg-white p-4 rounded shadow flex justify-between items-center";
+
+        div.innerHTML = `
+            <div>
+                <h3 class="font-bold">${item.name}</h3>
+                <p class="text-sm text-gray-500">Qty: ${item.quantity}</p>
+            </div>
+
+            <div class="text-right">
+                <p class="text-green-600 font-bold">$${item.price * item.quantity}</p>
+                <button onclick="removeFromCart(${item.id})"
+                    class="text-red-500 text-sm hover:underline mt-1">
+                    Remove
+                </button>
+            </div>
+        `;
+
+        cartContainer.appendChild(div);
+    });
+
+    totalEl.textContent = `$${total}`;
+}
+
+
+// ---------------- REMOVE ITEM ----------------
+function removeFromCart(id) {
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+    cart = cart.filter(item => item.id !== id);
+
+    localStorage.setItem("cart", JSON.stringify(cart));
+
+    loadCart(); // refresh UI
+}
+

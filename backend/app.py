@@ -2,9 +2,10 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask import jsonify
+from flask_cors import CORS
 
 app = Flask(__name__)
-
+CORS(app)
 # --- Database Config ---
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://vetty_user:password123@localhost:5432/vetty_db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -47,3 +48,4 @@ def get_products():
 
 if __name__ == "__main__":
     app.run(debug=True)
+
