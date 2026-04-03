@@ -11,47 +11,65 @@
 
 <!-- Navbar -->
 <header class="bg-white shadow-sm mb-6">
-    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
         <h1 class="text-xl font-bold text-green-600">Vetty</h1>
-        <a href="products.html" class="text-green-600">← Back</a>
+        <a href="products.html" class="text-green-600 hover:underline">← Back to Products</a>
     </div>
 </header>
 
-<div id="product-detail" class="max-w-2xl mx-auto bg-white p-6 rounded-lg shadow"></div>
+<div id="product-detail" class="max-w-2xl mx-auto bg-white p-6 rounded-lg shadow">
+    <p class="text-gray-500">Loading product...</p>
+</div>
 
 <script>
+// Get product ID from URL query string
 const params = new URLSearchParams(window.location.search);
 const productId = params.get("id");
 
-fetch(`http://127.0.0.1:5000/products/${productId}`)
-.then(res => res.json())
-.then(product => {
-    if(product.error){
+// Function to fetch product details
+async function fetchProduct(id) {
+    try {
+        const res = await fetch(`http://127.0.0.1:5000/products/${id}`);
+        if (!res.ok) throw new Error("Network response was not ok");
+
+        const product = await res.json();
+
+        if (product.error) {
+            document.getElementById("product-detail").innerHTML = `
+                <p class="text-red-500 font-semibold">${product.error}</p>
+            `;
+            return;
+        }
+
+        const imageUrl = product.image_url || 'https://via.placeholder.com/300x200?text=No+Image';
+
         document.getElementById("product-detail").innerHTML = `
-            <p class="text-red-500 font-semibold">${product.error}</p>
+            <img src="${imageUrl}" alt="${product.name}" class="w-full h-64 object-cover rounded mb-4">
+            <h2 class="text-3xl font-bold mb-4">${product.name}</h2>
+            <p class="text-gray-600 mb-4">${product.description}</p>
+            <p class="text-green-600 text-xl font-semibold mb-4">$${product.price}</p>
+            <p class="text-gray-700 mb-6">Stock: ${product.stock}</p>
+            <button onclick="addToCart(${product.id}, '${product.name}', ${product.price})"
+                class="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-500 transition">
+                Add to Cart
+            </button>
         `;
-        return;
+    } catch (err) {
+        console.error(err);
+        document.getElementById("product-detail").innerHTML = `
+            <p class="text-red-500 font-semibold">Failed to load product. Please try again later.</p>
+        `;
     }
+}
 
-    const imageUrl = product.image_url || 'https://via.placeholder.com/300x200?text=No+Image';
-
+// Run the function if ID exists
+if (productId) {
+    fetchProduct(productId);
+} else {
     document.getElementById("product-detail").innerHTML = `
-        <img src="${imageUrl}" alt="${product.name}" class="w-full h-64 object-cover rounded mb-4">
-        <h2 class="text-3xl font-bold mb-4">${product.name}</h2>
-        <p class="text-gray-600 mb-4">${product.description}</p>
-        <p class="text-green-600 text-xl font-semibold mb-6">$${product.price}</p>
-        <p class="text-gray-700 mb-4">Stock: ${product.stock}</p>
-        <button onclick="addToCart(${product.id}, '${product.name}', ${product.price})"
-            class="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-500 transition">
-            Add to Cart
-        </button>
+        <p class="text-red-500 font-semibold">No product selected. Go back to <a href="products.html" class="underline">Products</a>.</p>
     `;
-})
-.catch(err => {
-    document.getElementById("product-detail").innerHTML = `
-        <p class="text-red-500 font-semibold">Failed to load product. Try again.</p>
-    `;
-});
+}
 </script>
 
 <script src="../js/app.js"></script>
