@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Products - Vetty</title>
-
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
@@ -27,6 +26,38 @@
     <h2 class="text-2xl font-bold mb-8 text-center">All Products</h2>
     <div id="product-list" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
 </section>
+
+<script>
+const productList = document.getElementById("product-list");
+
+// Fetch products from backend
+fetch("http://127.0.0.1:5000/products")
+.then(res => res.json())
+.then(products => {
+    products.forEach(product => {
+        const div = document.createElement("div");
+        div.className = "bg-white p-4 rounded-lg shadow flex flex-col justify-between";
+
+        div.innerHTML = `
+            <h3 class="font-bold text-lg mb-2">${product.name}</h3>
+            <p class="text-gray-500 mb-2">${product.description}</p>
+            <p class="text-green-600 font-semibold mb-4">$${product.price}</p>
+            <div class="mt-auto flex justify-between items-center">
+                <button onclick="addToCart(${product.id}, '${product.name}', ${product.price})"
+                    class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-500 transition">
+                    Add
+                </button>
+                <a href="product-detail.html?id=${product.id}" 
+                    class="text-green-600 hover:underline font-medium ml-2">
+                    View
+                </a>
+            </div>
+        `;
+
+        productList.appendChild(div);
+    });
+});
+</script>
 
 <script src="../js/app.js"></script>
 </body>

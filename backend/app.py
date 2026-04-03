@@ -45,6 +45,22 @@ def get_products():
         })
     return jsonify(products_list)
 
+@app.route('/products/<int:id>', methods=['GET'])
+def get_product(id):
+    product = Product.query.get(id)
+
+    if not product:
+        return jsonify({"error": "Product not found"}), 404
+
+    return jsonify({
+        "id": product.id,
+        "name": product.name,
+        "description": product.description,
+        "price": float(product.price),
+        "stock": product.stock,
+        "image_url": product.image_url
+    })
+
 
 if __name__ == "__main__":
     app.run(debug=True)
