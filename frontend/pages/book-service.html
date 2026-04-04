@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Book Service</title>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100">
+
+<div class="max-w-md mx-auto bg-white p-6 mt-10 rounded shadow">
+    <h2 class="text-xl font-bold mb-4">Book Service</h2>
+
+    <form id="booking-form">
+        <input type="hidden" id="service-id">
+
+        <label class="block mb-2">Select Date</label>
+        <input type="date" id="date" required class="w-full border p-2 mb-4">
+
+        <button type="submit"
+            class="bg-green-600 text-white px-4 py-2 rounded w-full">
+            Confirm Booking
+        </button>
+    </form>
+
+    <p id="message" class="mt-4 text-center"></p>
+</div>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+const serviceId = params.get("id");
+
+document.getElementById("service-id").value = serviceId;
+
+document.getElementById("booking-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const date = document.getElementById("date").value;
+
+    const res = await fetch("http://127.0.0.1:5000/bookings", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            service_id: serviceId,
+            date: date
+        })
+    });
+
+    const data = await res.json();
+
+    document.getElementById("message").innerText =
+        data.message || data.error;
+});
+</script>
+
+</body>
+</html>

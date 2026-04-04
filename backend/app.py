@@ -61,6 +61,27 @@ def get_product(id):
         "image_url": product.image_url
     })
 
+from flask import request
+
+@app.route('/bookings', methods=['POST'])
+def create_booking():
+    data = request.get_json()
+
+    try:
+        new_booking = Booking(
+            user_id=1,  # temporary (we don't have auth yet)
+            service_id=data.get("service_id"),
+            date=data.get("date"),
+            status="pending"
+        )
+
+        db.session.add(new_booking)
+        db.session.commit()
+
+        return jsonify({"message": "Booking created successfully"}), 201
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
 
 if __name__ == "__main__":
     app.run(debug=True)

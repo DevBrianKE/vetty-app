@@ -6,7 +6,6 @@
     <title>Products - Vetty</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-
 <body class="bg-gray-50 text-gray-800">
 
 <!-- Navbar -->
@@ -34,20 +33,28 @@ const productList = document.getElementById("product-list");
 fetch("http://127.0.0.1:5000/products")
 .then(res => res.json())
 .then(products => {
+    if(!products.length){
+        productList.innerHTML = "<p class='col-span-full text-center text-red-500'>No products available.</p>";
+        return;
+    }
+
     products.forEach(product => {
         const div = document.createElement("div");
         div.className = "bg-white p-4 rounded-lg shadow flex flex-col justify-between";
 
+        const imageUrl = product.image_url || 'https://via.placeholder.com/300x200?text=No+Image';
+
         div.innerHTML = `
-            <h3 class="font-bold text-lg mb-2">${product.name}</h3>
-            <p class="text-gray-500 mb-2">${product.description}</p>
-            <p class="text-green-600 font-semibold mb-4">$${product.price}</p>
+            <img src="${imageUrl}" alt="${product.name}" class="w-full h-40 object-cover rounded mb-2">
+            <h3 class="font-bold text-lg mb-1">${product.name}</h3>
+            <p class="text-gray-500 mb-1">${product.description}</p>
+            <p class="text-green-600 font-semibold mb-2">$${product.price}</p>
             <div class="mt-auto flex justify-between items-center">
                 <button onclick="addToCart(${product.id}, '${product.name}', ${product.price})"
                     class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-500 transition">
                     Add
                 </button>
-                <a href="product-detail.html?id=${product.id}" 
+                <a href="./product-detail.html?id=${product.id}" 
                     class="text-green-600 hover:underline font-medium ml-2">
                     View
                 </a>
@@ -56,6 +63,9 @@ fetch("http://127.0.0.1:5000/products")
 
         productList.appendChild(div);
     });
+})
+.catch(err => {
+    productList.innerHTML = "<p class='col-span-full text-center text-red-500'>Failed to load products. Try again later.</p>";
 });
 </script>
 
