@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Service Detail - Vetty</title>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+<header class="bg-white shadow-sm mb-6">
+  <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between">
+    <h1 class="text-xl font-bold text-green-600">Vetty</h1>
+    <a href="services.html" class="text-green-600 hover:underline">← Back to Services</a>
+  </div>
+</header>
+<div id="service-detail" class="max-w-2xl mx-auto bg-white p-6 rounded-lg shadow text-center">
+  <p class="text-gray-500">Loading service...</p>
+</div>
+<script src="../js/app.js"></script>
+<script>
+async function loadService() {
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get("id");
+  const container = document.getElementById("service-detail");
+  if (!id) return container.innerHTML = "<p class='text-red-500'>No service selected.</p>";
+  const res = await fetch(`http://127.0.0.1:5000/services/${id}`);
+  const s = await res.json();
+  container.innerHTML = `
+    <h2 class="text-3xl font-bold mb-3">${s.name}</h2>
+    <p class="text-gray-600 mb-4">${s.description || "No description."}</p>
+    <p class="text-green-600 text-2xl font-semibold mb-4">$${s.price}</p>
+    <form id="booking-form" class="flex flex-col items-center space-y-4">
+      <input type="date" id="booking-date" class="p-2 border rounded w-1/2" required>
+      <input type="time" id="booking-time" class="p-2 border rounded w-1/2" required>
+      <button type="submit" class="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-500 transition">Confirm Booking</button>
+    </form>
+  `;
+  document.getElementById("booking-form").addEventListener("submit", async e => {
+    e.preventDefault();
+    const date = document.getElementById("booking-date").value;
+    const time = document.getElementById("booking-time").value;
+    const res = await fetch("http://127.0.0.1:5000/bookings", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({ service_id: s.id, date, time })
+    });
+    const data = await res.json();
+    alert(data.message || "Booking successful!");
+  });
+}
+loadService();
+</script>
+</body>
+</html>

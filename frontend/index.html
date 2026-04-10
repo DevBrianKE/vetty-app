@@ -1,15 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vetty</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="css/style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vetty</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="css/style.css">
 </head>
 <body class="bg-gray-50 text-gray-800">
 
-<!-- Navbar -->
 <header class="bg-white shadow-sm">
     <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
         <h1 class="text-2xl font-bold text-green-600">Vetty</h1>
@@ -23,7 +22,6 @@
     </div>
 </header>
 
-<!-- Hero -->
 <section class="bg-gradient-to-r from-green-500 to-green-600 text-white">
     <div class="max-w-7xl mx-auto px-6 py-20 text-center">
         <h2 class="text-4xl md:text-5xl font-bold mb-4">Care for Your Pets, the Smart Way 🐾</h2>
@@ -32,13 +30,11 @@
     </div>
 </section>
 
-<!-- Featured Products -->
 <section class="max-w-7xl mx-auto px-6 py-12 bg-gray-50">
     <h2 class="text-2xl font-bold mb-8 text-center">Featured Products</h2>
     <div id="featured-products" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 text-center"></div>
 </section>
 
-<!-- Featured Services -->
 <section class="max-w-7xl mx-auto px-6 py-12 bg-gray-100">
     <h2 class="text-2xl font-bold mb-8 text-center">Featured Services</h2>
     <div id="featured-services" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 text-center"></div>
@@ -50,6 +46,44 @@
     </div>
 </footer>
 
-<script src="js/home.js"></script>
+<script>
+async function loadFeatured() {
+    const productsContainer = document.getElementById("featured-products");
+    const servicesContainer = document.getElementById("featured-services");
+
+    try {
+        const prodRes = await fetch("http://127.0.0.1:5000/products");
+        const products = await prodRes.json();
+        products.slice(0,4).forEach(p => {
+            const div = document.createElement("div");
+            div.className = "bg-white p-4 rounded shadow";
+            div.innerHTML = `
+                <h3 class="font-bold mb-2">${p.name}</h3>
+                <p class="text-gray-500 mb-2">${p.description || ""}</p>
+                <p class="text-green-600 font-bold">$${p.price}</p>
+            `;
+            productsContainer.appendChild(div);
+        });
+
+        const servRes = await fetch("http://127.0.0.1:5000/services");
+        const services = await servRes.json();
+        services.slice(0,4).forEach(s => {
+            const div = document.createElement("div");
+            div.className = "bg-white p-4 rounded shadow";
+            div.innerHTML = `
+                <h3 class="font-bold mb-2">${s.name}</h3>
+                <p class="text-gray-500 mb-2">${s.description || ""}</p>
+                <a href="pages/book-service.html?id=${s.id}" class="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-500">Book</a>
+            `;
+            servicesContainer.appendChild(div);
+        });
+
+    } catch(err) {
+        console.error("Error loading featured:", err);
+    }
+}
+
+document.addEventListener("DOMContentLoaded", loadFeatured);
+</script>
 </body>
 </html>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Vetty</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+
+<!-- Navbar -->
+<header class="bg-white shadow-sm">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+        <h1 class="text-2xl font-bold text-green-600">Vetty</h1>
+        <a href="../index.html" class="text-green-600 hover:underline">Home</a>
+    </div>
+</header>
+
+<!-- Login Form -->
+<section class="max-w-md mx-auto mt-12 bg-white p-6 rounded shadow">
+    <h2 class="text-2xl font-bold mb-4 text-center">Login</h2>
+
+    <form id="login-form">
+        <label class="block mb-2 font-medium">Email</label>
+        <input type="email" id="email" required class="w-full border p-2 mb-4 rounded">
+
+        <label class="block mb-2 font-medium">Password</label>
+        <input type="password" id="password" required class="w-full border p-2 mb-4 rounded">
+
+        <button type="submit" class="w-full bg-green-600 text-white py-2 rounded hover:bg-green-500 transition">
+            Login
+        </button>
+    </form>
+
+    <p class="mt-4 text-center text-gray-600">
+        Don't have an account? <a href="register.html" class="text-green-600 hover:underline">Register</a>
+    </p>
+
+    <p id="login-message" class="mt-4 text-center text-red-500 font-semibold"></p>
+</section>
+
+<script>
+document.getElementById("login-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value.trim();
+    const messageEl = document.getElementById("login-message");
+
+    // Simple frontend validation
+    if (!email || !password) {
+        messageEl.innerText = "Please fill in all fields.";
+        return;
+    }
+
+    try {
+        const res = await fetch("http://127.0.0.1:5000/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password })
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+            messageEl.classList.remove("text-red-500");
+            messageEl.classList.add("text-green-600");
+            messageEl.innerText = "Login successful! Redirecting...";
+            // Save token/user info to localStorage if backend returns it
+            localStorage.setItem("user", JSON.stringify(data.user));
+            setTimeout(() => { window.location.href = "../index.html"; }, 1500);
+        } else {
+            messageEl.classList.remove("text-green-600");
+            messageEl.classList.add("text-red-500");
+            messageEl.innerText = data.error || "Login failed.";
+        }
+    } catch (err) {
+        messageEl.innerText = "Server error. Try again later.";
+    }
+});
+</script>
+
+</body>
+</html>

@@ -2,32 +2,35 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Cart - Vetty</title>
 <script src="https://cdn.tailwindcss.com"></script>
 </head>
-
 <body class="bg-gray-50 text-gray-800">
 
 <!-- Navbar -->
 <header class="bg-white shadow-sm">
-    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between">
-        <h1 class="text-xl font-bold text-green-600">Vetty</h1>
-        <a href="products.html" class="text-green-600">← Continue Shopping</a>
+    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+        <h1 class="text-2xl font-bold text-green-600">Vetty</h1>
+        <nav class="space-x-6 text-sm font-medium">
+            <a href="../index.html" class="text-green-700 hover:text-green-600">Home</a>
+            <a href="products.html" class="text-green-700 hover:text-green-600">Products</a>
+            <a href="cart.html" class="text-green-700 font-bold">Cart</a>
+        </nav>
     </div>
 </header>
 
-<!-- Cart Section -->
 <section class="max-w-4xl mx-auto px-6 py-10">
     <h2 class="text-2xl font-bold mb-6">Your Cart 🛒</h2>
 
+    <!-- Cart Items -->
     <div id="cart-items" class="space-y-4"></div>
 
-    <!-- Total -->
+    <!-- Cart Total & Checkout -->
     <div class="mt-8 p-6 bg-white rounded-lg shadow">
         <h3 class="text-xl font-semibold mb-2">Total:</h3>
-        <p id="cart-total" class="text-2xl text-green-600 font-bold">$0</p>
-
-        <button class="mt-4 w-full bg-green-600 text-white py-3 rounded hover:bg-green-500 transition">
+        <p id="cart-total" class="text-2xl text-green-600 font-bold">$0.00</p>
+        <button id="checkout-btn" class="mt-4 w-full bg-green-600 text-white py-3 rounded hover:bg-green-500 transition">
             Proceed to Checkout
         </button>
     </div>
@@ -35,7 +38,38 @@
 
 <script src="../js/app.js"></script>
 <script>
-loadCart();
+document.addEventListener("DOMContentLoaded", () => {
+    if (document.getElementById("cart-items")) loadCart();
+
+    const checkoutBtn = document.getElementById("checkout-btn");
+    if (checkoutBtn) {
+        checkoutBtn.addEventListener("click", async () => {
+            const cart = getCart();
+            if (!cart.length) return alert("Your cart is empty!");
+
+            try {
+                const res = await fetch("http://127.0.0.1:5000/orders", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ items: cart })
+                });
+
+                const data = await res.json();
+
+                if (res.ok) {
+                    alert(data.message || "Order placed successfully!");
+                    localStorage.removeItem("cart");
+                    loadCart();
+                } else {
+                    alert(data.error || "Failed to place order.");
+                }
+            } catch (err) {
+                console.error(err);
+                alert("Server error. Try again later.");
+            }
+        });
+    }
+});
 </script>
 
 </body>

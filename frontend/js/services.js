@@ -1,80 +1,50 @@
-// URL for  backend services API
-const API_URL = "http://127.0.0.1:5000/services";
+// services.js
 
-// ---------------- LOAD ALL SERVICES ----------------
-async function loadServices() {
-    const serviceList = document.getElementById("service-list");
-    if (!serviceList) return;
+const serviceList = document.getElementById("service-list");
+const featuredServices = document.getElementById("featured-services");
 
-    try {
-        // Fetch services from backend API
-        const res = await fetch(API_URL);
-        const services = await res.json();
-
-        serviceList.innerHTML = "";
+// Fetch all services from backend
+fetch("http://127.0.0.1:5000/services")
+    .then(res => res.json())
+    .then(services => {
+        if (!services.length) {
+            if (serviceList) serviceList.innerHTML = "<p class='text-red-500'>No services available.</p>";
+            if (featuredServices) featuredServices.innerHTML = "<p class='text-red-500'>No featured services.</p>";
+            return;
+        }
 
         services.forEach(service => {
-            const div = document.createElement("div");
-            div.className = "bg-white p-6 rounded-lg shadow hover:shadow-lg transition";
+            const card = document.createElement("div");
+            card.className = "bg-white p-4 rounded-lg shadow";
 
-            div.innerHTML = `
-                <h3 class="text-lg font-bold mb-2">${service.name}</h3>
-                <p class="text-gray-600 mb-4">${service.description}</p>
+            const imageUrl = service.image_url || "https://via.placeholder.com/300x200?text=No+Image";
 
-                <button onclick="bookService(${service.id})"
+            card.innerHTML = `
+                <img src="${imageUrl}" alt="${service.name}" class="w-full h-40 object-cover rounded mb-2">
+                <h3 class="font-bold text-lg mb-1">${service.name}</h3>
+                <p class="text-gray-500 mb-2">${service.description}</p>
+                <p class="text-green-600 font-semibold mb-2">$${service.price}</p>
+                <button onclick="bookService(${service.id})" 
                     class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-500 transition">
-                    Book
+                    Book Service
                 </button>
             `;
 
-            serviceList.appendChild(div);
+            if (serviceList) serviceList.appendChild(card);
+
+            // Featured services on homepage (limit 4)
+            if (featuredServices && featuredServices.childElementCount < 4) {
+                const featuredCard = card.cloneNode(true);
+                featuredServices.appendChild(featuredCard);
+            }
         });
+    })
+    .catch(err => {
+        if (serviceList) serviceList.innerHTML = "<p class='text-red-500'>Failed to load services.</p>";
+        if (featuredServices) featuredServices.innerHTML = "<p class='text-red-500'>Failed to load featured services.</p>";
+    });
 
-    } catch (err) {
-        console.error("Error loading services:", err);
-        // fallback: show some default services if backend fails
-        showFallbackServices();
-    }
-}
-
-// ---------------- BOOK SERVICE ----------------
+// Redirect to book-service page
 function bookService(id) {
-    // redirect to booking page with service id as query param
     window.location.href = `book-service.html?id=${id}`;
 }
-
-// ---------------- FALLBACK STATIC SERVICES ----------------
-function showFallbackServices() {
-    const serviceList = document.getElementById("service-list");
-    const fallbackServices = [
-        { id: 1, name: "Grooming", description: "Professional grooming services for your pet" },
-        { id: 2, name: "Vaccination", description: "Professional vaccination services for your pet" },
-        { id: 3, name: "Health Checkup", description: "Regular health examinations and diagnostics" },
-        { id: 4, name: "Dental Care", description: "Comprehensive dental cleaning and care" },
-        { id: 5, name: "Emergency Care", description: "24/7 emergency veterinary services" },
-        { id: 6, name: "Training", description: "Behavioral and obedience training sessions" },
-        { id: 7, name: "Pet Sitting", description: "In-home care for your pets while you’re away" },
-    ];
-
-    serviceList.innerHTML = "";
-
-    fallbackServices.forEach(service => {
-        const div = document.createElement("div");
-        div.className = "bg-white p-6 rounded-lg shadow hover:shadow-lg transition";
-
-        div.innerHTML = `
-            <h3 class="text-lg font-bold mb-2">${service.name}</h3>
-            <p class="text-gray-600 mb-4">${service.description}</p>
-
-            <button onclick="bookService(${service.id})"
-                class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-500 transition">
-                Book
-            </button>
-        `;
-
-        serviceList.appendChild(div);
-    });
-}
-
-// Load services on page load
-loadServices();

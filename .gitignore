@@ -1,10 +1,40 @@
-# Python virtual environment
+# -----------------------------
+# Python Virtual Environment
+# -----------------------------
 venv/
 backend/venv/
 
-# Python cache
+# Python Cache
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
 
-# Environment variables
+# Flask
+instance/
 .env
+
+# Database (local SQLite if used)
+*.db
+*.sqlite3
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Node (future-proof if added later)
+node_modules/
+
+# Build / dist
+dist/
+build/
+
+# VS Code / Editors
+.vscode/
+.idea/
+
+# Mac/Linux temp
+*~

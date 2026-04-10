@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Vetty</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+
+<!-- Navbar -->
+<header class="bg-white shadow-sm">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+        <h1 class="text-2xl font-bold text-green-600">Vetty</h1>
+        <a href="../index.html" class="text-green-600 hover:underline">Home</a>
+    </div>
+</header>
+
+<!-- Registration Form -->
+<section class="max-w-md mx-auto mt-12 bg-white p-6 rounded shadow">
+    <h2 class="text-2xl font-bold mb-4 text-center">Register</h2>
+
+    <form id="register-form">
+        <label class="block mb-2 font-medium">Full Name</label>
+        <input type="text" id="name" required class="w-full border p-2 mb-4 rounded">
+
+        <label class="block mb-2 font-medium">Email</label>
+        <input type="email" id="email" required class="w-full border p-2 mb-4 rounded">
+
+        <label class="block mb-2 font-medium">Password</label>
+        <input type="password" id="password" required class="w-full border p-2 mb-4 rounded">
+
+        <label class="block mb-2 font-medium">Confirm Password</label>
+        <input type="password" id="confirm-password" required class="w-full border p-2 mb-4 rounded">
+
+        <button type="submit" class="w-full bg-green-600 text-white py-2 rounded hover:bg-green-500 transition">
+            Register
+        </button>
+    </form>
+
+    <p class="mt-4 text-center text-gray-600">
+        Already have an account? <a href="login.html" class="text-green-600 hover:underline">Login</a>
+    </p>
+
+    <p id="register-message" class="mt-4 text-center text-red-500 font-semibold"></p>
+</section>
+
+<script>
+document.getElementById("register-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const name = document.getElementById("name").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value.trim();
+    const confirmPassword = document.getElementById("confirm-password").value.trim();
+    const messageEl = document.getElementById("register-message");
+
+    if (!name || !email || !password || !confirmPassword) {
+        messageEl.innerText = "Please fill in all fields.";
+        return;
+    }
+
+    if (password !== confirmPassword) {
+        messageEl.innerText = "Passwords do not match.";
+        return;
+    }
+
+    try {
+        const res = await fetch("http://127.0.0.1:5000/register", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name, email, password })
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+            messageEl.classList.remove("text-red-500");
+            messageEl.classList.add("text-green-600");
+            messageEl.innerText = "Registration successful! Redirecting to login...";
+            setTimeout(() => { window.location.href = "login.html"; }, 1500);
+        } else {
+            messageEl.classList.remove("text-green-600");
+            messageEl.classList.add("text-red-500");
+            messageEl.innerText = data.error || "Registration failed.";
+        }
+    } catch (err) {
+        messageEl.innerText = "Server error. Try again later.";
+    }
+});
+</script>
+
+</body>
+</html>

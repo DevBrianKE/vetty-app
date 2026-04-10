@@ -1,74 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Products - Vetty</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Products - Vetty</title>
+<script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-50 text-gray-800">
-
-<!-- Navbar -->
 <header class="bg-white shadow-sm">
-    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-        <h1 class="text-2xl font-bold text-green-600">Vetty</h1>
-        <nav class="space-x-6 text-sm font-medium">
-            <a href="../index.html" class="text-green-700 hover:text-green-600">Home</a>
-            <a href="products.html" class="text-green-700 font-bold">Products</a>
-            <a href="cart.html" class="text-green-700 hover:text-green-600">Cart</a>
-        </nav>
-    </div>
+  <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+    <h1 class="text-2xl font-bold text-green-600">Vetty</h1>
+    <nav class="space-x-6 text-sm font-medium">
+      <a href="index.html" class="text-green-700 hover:text-green-600">Home</a>
+      <a href="products.html" class="text-green-700 font-bold">Products</a>
+      <a href="services.html" class="text-green-700 hover:text-green-600">Services</a>
+      <a href="cart.html" class="text-green-700 hover:text-green-600">Cart</a>
+    </nav>
+  </div>
 </header>
-
-<!-- Products -->
 <section class="max-w-7xl mx-auto px-6 py-12">
-    <h2 class="text-2xl font-bold mb-8 text-center">All Products</h2>
-    <div id="product-list" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
+  <h2 class="text-2xl font-bold mb-8 text-center">All Products</h2>
+  <div id="product-list" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
 </section>
-
+<script src="../js/app.js"></script>
 <script>
 const productList = document.getElementById("product-list");
 
-// Fetch products from backend
-fetch("http://127.0.0.1:5000/products")
-.then(res => res.json())
-.then(products => {
-    if(!products.length){
-        productList.innerHTML = "<p class='col-span-full text-center text-red-500'>No products available.</p>";
-        return;
-    }
-
-    products.forEach(product => {
-        const div = document.createElement("div");
-        div.className = "bg-white p-4 rounded-lg shadow flex flex-col justify-between";
-
-        const imageUrl = product.image_url || 'https://via.placeholder.com/300x200?text=No+Image';
-
-        div.innerHTML = `
-            <img src="${imageUrl}" alt="${product.name}" class="w-full h-40 object-cover rounded mb-2">
-            <h3 class="font-bold text-lg mb-1">${product.name}</h3>
-            <p class="text-gray-500 mb-1">${product.description}</p>
-            <p class="text-green-600 font-semibold mb-2">$${product.price}</p>
-            <div class="mt-auto flex justify-between items-center">
-                <button onclick="addToCart(${product.id}, '${product.name}', ${product.price})"
-                    class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-500 transition">
-                    Add
-                </button>
-                <a href="./product-detail.html?id=${product.id}" 
-                    class="text-green-600 hover:underline font-medium ml-2">
-                    View
-                </a>
-            </div>
-        `;
-
-        productList.appendChild(div);
+async function loadProducts() {
+  try {
+    const res = await fetch("http://127.0.0.1:5000/products");
+    const products = await res.json();
+    productList.innerHTML = "";
+    products.forEach(p => {
+      const div = document.createElement("div");
+      div.className = "bg-white p-4 rounded-lg shadow flex flex-col justify-between";
+      const safeName = p.name.replace(/'/g, "\\'");
+      div.innerHTML = `
+        <img src="${p.image_url || 'https://via.placeholder.com/300x200'}" class="w-full h-40 object-cover rounded mb-2">
+        <h3 class="font-bold text-lg mb-1">${p.name}</h3>
+        <p class="text-gray-500 mb-1">${p.description || 'No description.'}</p>
+        <p class="text-green-600 font-semibold mb-2">$${p.price}</p>
+        <div class="mt-auto flex justify-between items-center">
+          <button onclick="addToCart(${p.id}, '${safeName}', ${p.price})" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-500 transition">Add 🛒</button>
+          <a href="product-detail.html?id=${p.id}" class="text-green-600 hover:underline font-medium ml-2">View</a>
+        </div>`;
+      productList.appendChild(div);
     });
-})
-.catch(err => {
-    productList.innerHTML = "<p class='col-span-full text-center text-red-500'>Failed to load products. Try again later.</p>";
-});
+  } catch (err) { console.error(err); }
+}
+loadProducts();
 </script>
-
-<script src="../js/app.js"></script>
 </body>
 </html>
