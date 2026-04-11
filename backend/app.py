@@ -3,18 +3,25 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_cors import CORS
 from datetime import datetime
+import os
 
 app = Flask(__name__)
 CORS(app)
 
 # ---------------- DATABASE ----------------
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://vetty_user:password123@localhost:5432/vetty_db'
+DATABASE_URL = os.getenv(
+    "DATABASE_URL",
+    "sqlite:///dev.db"
+)
+
+app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
+# INIT DB (IMPORTANT - YOU WERE MISSING THIS)
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
-# Import models
+# Import models AFTER db init
 from models import User, Product, Service, Order, OrderItem, Booking, Review
 
 # ---------------- PRODUCTS ----------------
@@ -35,6 +42,7 @@ def get_product(id):
     product = Product.query.get(id)
     if not product:
         return jsonify({"error": "Product not found"}), 404
+
     return jsonify({
         "id": product.id,
         "name": product.name,
@@ -60,6 +68,7 @@ def get_service(id):
     service = Service.query.get(id)
     if not service:
         return jsonify({"error": "Service not found"}), 404
+
     return jsonify({
         "id": service.id,
         "name": service.name,
@@ -72,10 +81,12 @@ def get_service(id):
 def create_order():
     data = request.get_json()
     cart_items = data.get("items")
+
     if not cart_items:
         return jsonify({"error": "No items in cart"}), 400
 
     total = 0
+
     order = Order(user_id=1, total_amount=0, status="pending")
     db.session.add(order)
     db.session.flush()
@@ -84,19 +95,28 @@ def create_order():
         product = Product.query.get(item["id"])
         if not product:
             continue
+
         quantity = item["quantity"]
         total += float(product.price) * quantity
-        order_item = OrderItem(order_id=order.id, product_id=product.id, quantity=quantity, price=product.price)
+
+        order_item = OrderItem(
+            order_id=order.id,
+            product_id=product.id,
+            quantity=quantity,
+            price=product.price
+        )
         db.session.add(order_item)
 
     order.total_amount = total
     db.session.commit()
+
     return jsonify({"message": "Order placed successfully"})
 
 # ---------------- BOOKINGS ----------------
 @app.route('/bookings', methods=['POST'])
 def create_booking():
     data = request.get_json()
+
     service_id = data.get("service_id")
     date = data.get("date")
     time = data.get("time")
@@ -104,11 +124,20 @@ def create_booking():
     if not all([service_id, date, time]):
         return jsonify({"error": "Missing booking details"}), 400
 
-    booking = Booking(user_id=1, service_id=service_id, date=date, time=time, status="pending")
+    booking = Booking(
+        user_id=1,
+        service_id=service_id,
+        date=date,
+        time=time,
+        status="pending"
+    )
+
     db.session.add(booking)
     db.session.commit()
+
     return jsonify({"message": "Booking created successfully"})
 
-# ---------------- RUN ----------------
+# ---------------- RUN (RENDER FIX) ----------------
 if __name__ == "__main__":
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
